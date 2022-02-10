@@ -416,8 +416,6 @@ void Tasks::CheckBattery(void *arg) {
         if (rs == 1) {
             msg = (MessageBattery*)robot.Write(new Message(MESSSAGE_ROBOT_BATTERY_GET));
             
-            cout << " battery level: " << cpMove;
-            
             rt_mutex_acquire(&mutex_robot, TM_INFINITE);
             robot.Write(msg);
             rt_mutex_release(&mutex_robot);
