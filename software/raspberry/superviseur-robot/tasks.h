@@ -133,6 +133,11 @@ private:
      */
     void MoveTask(void *arg);
     
+    /**
+     * @brief Thread checking the battery of the robot.
+     */
+    void CheckBattery(void *arg);
+    
     /**********************************************************************/
     /* Queue services                                                     */
     /**********************************************************************/
