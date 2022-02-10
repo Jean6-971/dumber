@@ -414,15 +414,12 @@ void Tasks::CheckBattery(void *arg) {
         rs = robotStarted;
         rt_mutex_release(&mutex_robotStarted);
         if (rs == 1) {
-            //msg = (MessageBattery*)robot.Write(new Message(MESSAGE_ROBOT_BATTERY_GET));
-            msg = new MessageBattery(MESSAGE_ROBOT_BATTERY_GET, levelBat);
-            
             rt_mutex_acquire(&mutex_robot, TM_INFINITE);
-            robot.Write(msg);
+            msg = (MessageBattery*)robot.Write(new Message(MESSAGE_ROBOT_BATTERY_GET));
             rt_mutex_release(&mutex_robot);
             
             rt_mutex_acquire(&mutex_monitor, TM_INFINITE);
-            monitor.Write(Message(levelBat));
+            monitor.Write(msg);
             rt_mutex_release(&mutex_monitor);
             
             cout << msg->ToString() << flush;
