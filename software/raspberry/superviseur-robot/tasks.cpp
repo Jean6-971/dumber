@@ -27,6 +27,7 @@
 #define PRIORITY_TSTARTROBOT 20
 #define PRIORITY_TCAMERA 21
 #define PRIORITY_TBATTERY 19
+#define PRIORITY_TLOSTCOMMONSUP 20
 
 /*
  * Some remarks:
@@ -128,6 +129,10 @@ void Tasks::Init() {
         cerr << "Error task create: " << strerror(-err) << endl << flush;
         exit(EXIT_FAILURE);
     }
+    if (err = rt_task_create(&th_LostComMonSup, "th_LostComMonSup", 0, PRIORITY_TLOSTCOMMONSUP, 0)) {
+        cerr << "Error task create: " << strerror(-err) << endl << flush;
+        exit(EXIT_FAILURE);
+    }
     cout << "Tasks created successfully" << endl << flush;
 
     /**************************************************************************************/
@@ -172,10 +177,14 @@ void Tasks::Run() {
         cerr << "Error task start: " << strerror(-err) << endl << flush;
         exit(EXIT_FAILURE);
     }
-    if (err = rt_task_start(&th_battery, (void(*)(void*)) & Tasks::CheckBattery, this)) {
+    /*if (err = rt_task_start(&th_battery, (void(*)(void*)) & Tasks::CheckBattery, this)) {
         cerr << "Error task start: " << strerror(-err) << endl << flush;
         exit(EXIT_FAILURE);
     }
+    /*if (err = rt_task_start(&th_LostComMonSup, (void(*)(void*)) & Tasks::LostComMonSup, this)) {
+        cerr << "Error task start: " << strerror(-err) << endl << flush;
+        exit(EXIT_FAILURE);
+    }*/
 
     cout << "Tasks launched" << endl << flush;
 }
@@ -395,7 +404,7 @@ void Tasks::MoveTask(void *arg) {
 /**
  * @brief Thread checking the battery of the robot.
  */
-void Tasks::CheckBattery(void *arg) {
+/*void Tasks::CheckBattery(void *arg) {
     int rs;
     MessageBattery * msg;
     
@@ -406,7 +415,7 @@ void Tasks::CheckBattery(void *arg) {
     /**************************************************************************************/
     /* The task starts here                                                               */
     /**************************************************************************************/
-    rt_task_set_periodic(NULL, TM_NOW, 500000000);
+    /*rt_task_set_periodic(NULL, TM_NOW, 500000000);
 
     while (1) {
         rt_task_wait_period(NULL);
@@ -427,7 +436,7 @@ void Tasks::CheckBattery(void *arg) {
         }
         cout << endl << flush;
     }
-}
+} 
 
 /**
  * Write a message in a given queue
@@ -461,3 +470,49 @@ Message *Tasks::ReadInQueue(RT_QUEUE *queue) {
     return msg;
 }
 
+/**
+ * @brief Thread detecting the lost of the communication between the supervisor and monitor
+ */
+//void Tasks::LostComMonSup(void *arg) {
+    /*bool comLost= false;
+    Message *msgRcv;
+    
+    cout << "Start " << __PRETTY_FUNCTION__ << endl << flush;
+   
+    /*while(!comLost){
+    //Read message on socket
+    msgRcv = monitor.Read();
+    
+        if (msgRcv->CompareID(MESSAGE_MONITOR_LOST)) { // if we have lost the communication
+                //close de commonitor
+            comLost=true;
+            
+            //Stopper com monitor supervisor
+            rt_mutex_acquire(&mutex_monitor, TM_INFINITE);
+            monitor.Close();
+            rt_mutex_release(&mutex_monitor);
+            
+            //stop robot
+            rt_mutex_acquire(&mutex_robotStarted, TM_INFINITE);
+            robotStarted = 0;
+            rt_mutex_release(&mutex_robotStarted);
+            
+            //Stopper communication robot superviseur
+            rt_mutex_acquire(&mutex_robot, TM_INFINITE);
+            robot.Close();
+            rt_mutex_release(&mutex_robot);
+            
+            //eteindre camera
+            rt_mutex_acquire(&mutex_camera, TM_INFINITE);
+            camera.Close();
+            rt_mutex_release(&mutex_camera);
+            
+            
+            //kill serveur
+            //exit(-1);
+                
+        }
+    //delete(msgRcv);
+    }
+    cout << "Monitor is lost" << endl << flush; */
+//}

@@ -66,6 +66,8 @@ private:
     ComRobot robot;
     int robotStarted = 0;
     int move = MESSAGE_ROBOT_STOP;
+    Camera camera;
+    
     
     /**********************************************************************/
     /* Tasks                                                              */
@@ -77,6 +79,7 @@ private:
     RT_TASK th_startRobot;
     RT_TASK th_move;
     RT_TASK th_battery;
+    RT_TASK th_LostComMonSup; 
     
     /**********************************************************************/
     /* Mutex                                                              */
@@ -85,6 +88,7 @@ private:
     RT_MUTEX mutex_robot;
     RT_MUTEX mutex_robotStarted;
     RT_MUTEX mutex_move;
+    RT_MUTEX mutex_camera;
 
     /**********************************************************************/
     /* Semaphores                                                         */
@@ -137,6 +141,8 @@ private:
      * @brief Thread checking the battery of the robot.
      */
     void CheckBattery(void *arg);
+    
+    void LostComMonSup(void *arg);
     
     /**********************************************************************/
     /* Queue services                                                     */
