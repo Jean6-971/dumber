@@ -256,7 +256,7 @@ string MessageString::ToString() {
         return "Invalid message";
 }
 
-/**
+/**mutex_monitor
  * Allocate a new message and copy contents of current message
  * @return A message, copy of current
  */

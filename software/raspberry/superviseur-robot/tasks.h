@@ -77,9 +77,10 @@ private:
     RT_TASK th_receiveFromMon;
     RT_TASK th_openComRobot;
     RT_TASK th_startRobot;
+    RT_TASK th_startRobotWD;
     RT_TASK th_move;
     RT_TASK th_battery;
-    RT_TASK th_LostComMonSup; 
+    RT_TASK th_reload; 
     
     /**********************************************************************/
     /* Mutex                                                              */
@@ -97,6 +98,7 @@ private:
     RT_SEM sem_openComRobot;
     RT_SEM sem_serverOk;
     RT_SEM sem_startRobot;
+    RT_SEM sem_startRobotWD;
 
     /**********************************************************************/
     /* Message queues                                                     */
@@ -133,6 +135,16 @@ private:
     void StartRobotTask(void *arg);
     
     /**
+     * @brief Thread starting the communication with the robot.
+     */
+    void StartRobotTaskWD(void *arg);
+    
+    /**
+     * @brief Send reload every 50 ms
+     */
+    void SendReload(void *arg);
+    
+    /**
      * @brief Thread handling control of the robot.
      */
     void MoveTask(void *arg);
@@ -142,7 +154,6 @@ private:
      */
     void CheckBattery(void *arg);
     
-    void LostComMonSup(void *arg);
     
     /**********************************************************************/
     /* Queue services                                                     */
