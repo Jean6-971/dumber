@@ -65,8 +65,14 @@ private:
     ComMonitor monitor;
     ComRobot robot;
     int robotStarted = 0;
+    int watchdog = 1;
     int move = MESSAGE_ROBOT_STOP;
     Camera camera;
+    
+    Message * robotResponse;
+    int robotErrors = 0;
+
+    bool comOK = false; //BECOMES TRUE IF THE COMMUNICATION WITH THE ROBOT IS SUCCESSFULLY ESTABLISHED
     
     
     /**********************************************************************/
@@ -77,10 +83,10 @@ private:
     RT_TASK th_receiveFromMon;
     RT_TASK th_openComRobot;
     RT_TASK th_startRobot;
-    RT_TASK th_startRobotWD;
     RT_TASK th_move;
     RT_TASK th_battery;
     RT_TASK th_reload; 
+    RT_TASK th_errorHandling;
     
     /**********************************************************************/
     /* Mutex                                                              */
@@ -88,8 +94,12 @@ private:
     RT_MUTEX mutex_monitor;
     RT_MUTEX mutex_robot;
     RT_MUTEX mutex_robotStarted;
+    RT_MUTEX mutex_WD;
     RT_MUTEX mutex_move;
     RT_MUTEX mutex_camera;
+    RT_MUTEX mutex_robotErrors;
+    RT_MUTEX mutex_com_robot;
+    
 
     /**********************************************************************/
     /* Semaphores                                                         */
@@ -98,7 +108,6 @@ private:
     RT_SEM sem_openComRobot;
     RT_SEM sem_serverOk;
     RT_SEM sem_startRobot;
-    RT_SEM sem_startRobotWD;
 
     /**********************************************************************/
     /* Message queues                                                     */
@@ -134,10 +143,6 @@ private:
      */
     void StartRobotTask(void *arg);
     
-    /**
-     * @brief Thread starting the communication with the robot.
-     */
-    void StartRobotTaskWD(void *arg);
     
     /**
      * @brief Send reload every 50 ms
@@ -164,6 +169,8 @@ private:
      * @param msg Message to be stored
      */
     void WriteInQueue(RT_QUEUE *queue, Message *msg);
+    
+    void RobotErrorsHandling(void *arg);
     
     /**
      * Read a message from a given queue, block if empty
